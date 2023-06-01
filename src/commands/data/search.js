@@ -16,6 +16,7 @@ module.exports = {
 
     async execute(interaction) {
         const query = interaction.options.getString('query')
+        console.log(`Processing command: /search ${query}`)
 
         const data = await getData()
 
