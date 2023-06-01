@@ -1,0 +1,23 @@
+{
+  "name": "lpu-belt-explorer-bot",
+  "version": "0.0.1",
+  "description": "A discord bot to search LPU Belt Explorer data.",
+  "main": "index.js",
+  "license": "Unlicense",
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "fuzzysort": "^2.0.4",
+    "node-cache": "^5.1.2",
+    "remove-accents": "^0.4.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.41.0",
+    "nodemon": "^2.0.22"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "deploy": "node src/deployCommands.js",
+    "lint": "eslint ./src"
+  }
+}
