@@ -1,6 +1,7 @@
 const removeAccents = require('remove-accents')
-
 const NodeCache = require('node-cache')
+const fetch = require('node-fetch')
+
 const oneHour = 60 * 60
 const fifteenMinutes = 15 * 60
 const cache = new NodeCache({

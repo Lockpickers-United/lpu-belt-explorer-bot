@@ -8,6 +8,7 @@
     "discord.js": "^14.11.0",
     "fuzzysort": "^2.0.4",
     "node-cache": "^5.1.2",
+    "node-fetch": "^2.6.11",
     "remove-accents": "^0.4.4"
   },
   "devDependencies": {
