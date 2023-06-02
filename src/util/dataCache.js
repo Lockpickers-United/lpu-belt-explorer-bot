@@ -20,6 +20,7 @@ const refreshData = async () => {
                 .flat()
                 .filter(a => a)
                 .join(',')
+            + `, ${entry.version}, ${entry.notes}`
         )
     }))
     cache.set('data', finalData)
