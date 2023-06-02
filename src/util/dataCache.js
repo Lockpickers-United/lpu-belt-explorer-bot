@@ -19,8 +19,12 @@ const refreshData = async () => {
                 .map(({make, model}) => [make, model])
                 .flat()
                 .filter(a => a)
+                .concat([
+                    entry.version,
+                    entry.notes,
+                    entry.belt
+                ])
                 .join(',')
-            + `, ${entry.version}, ${entry.notes}`
         )
     }))
     cache.set('data', finalData)
