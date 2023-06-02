@@ -42,10 +42,10 @@ module.exports = {
 
             console.log(`${dayjs().toISOString()} Processing command: /search ${query} id=${id} name=${name}`)
 
-            const safeQuery = querystring.encode(query)
+            const safeQuery = querystring.encode({search: query})
             const response = [
                 `**Term**: ${query}, **Top Result**: https://share.lpubelts.com/?id=${id}&name=${name}`,
-                `Continue this search on **LPU Belt Explorer**: https://lpubelts.com/?search=${safeQuery}`
+                `Continue this search on **LPU Belt Explorer**: https://lpubelts.com/?${safeQuery}`
             ].join('\n')
             await interaction.reply(response)
         } else {
