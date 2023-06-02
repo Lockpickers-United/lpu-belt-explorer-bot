@@ -16,7 +16,6 @@ module.exports = {
 
     async execute(interaction) {
         const query = interaction.options.getString('query')
-        console.log(`Processing command: /search ${query}`)
 
         const data = await getData()
 
@@ -39,6 +38,7 @@ module.exports = {
             const makeModel = make && make !== model ? `${make} ${model}` : model
             const name = makeModel.replace(/[\s/]/g, '_').replace(/\W/g, '')
 
+            console.log(`Processing command: /search ${query} id=${id} name=${name}`)
             await interaction.reply(`https://share.lpubelts.com/?id=${id}&name=${name}`)
         } else {
             await interaction.reply(`No locks found!`)
