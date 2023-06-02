@@ -3,6 +3,7 @@ const {getData} = require('../../util/dataCache')
 const fuzzysort = require('fuzzysort')
 const removeAccents = require('remove-accents')
 const dayjs = require('dayjs')
+const querystring = require('querystring')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -40,7 +41,13 @@ module.exports = {
             const name = makeModel.replace(/[\s/]/g, '_').replace(/\W/g, '')
 
             console.log(`${dayjs().toISOString()} Processing command: /search ${query} id=${id} name=${name}`)
-            await interaction.reply(`https://share.lpubelts.com/?id=${id}&name=${name}`)
+
+            const safeQuery = querystring.encode(query)
+            const response = [
+                `**Term**: ${query}, **Top Result**: https://share.lpubelts.com/?id=${id}&name=${name}`,
+                `Continue this search on **LPU Belt Explorer**: https://lpubelts.com/?search=${safeQuery}`
+            ].join('\n')
+            await interaction.reply(response)
         } else {
             await interaction.reply(`No locks found!`)
         }
