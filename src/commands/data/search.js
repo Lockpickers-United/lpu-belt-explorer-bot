@@ -40,7 +40,9 @@ module.exports = {
             const makeModel = make && make !== model ? `${make} ${model}` : model
             const name = makeModel.replace(/[\s/]/g, '_').replace(/\W/g, '')
 
-            console.log(`${dayjs().toISOString()} Processing command: /search ${query} id=${id} name=${name}`)
+            const {user: {username, discriminator}} = interaction
+            const requestor = `${username}#${discriminator}`
+            console.log(`${dayjs().toISOString()} Processing command: /search ${query} id=${id} name=${name} requestor=${requestor}`)
 
             const safeQuery = querystring.encode({search: query})
             const response = [
