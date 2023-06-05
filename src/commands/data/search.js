@@ -56,7 +56,4 @@ module.exports = {
     }
 }
 
-const fuzzySortKeys = [
-    'fuzzy',
-    'id'
-]
+const fuzzySortKeys = ['fuzzy']
