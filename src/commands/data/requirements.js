@@ -11,16 +11,15 @@ module.exports = {
                 .setDescription('The LPU Belt to get requirements for.')
                 .setRequired(true)
                 .addChoices(
-                    {name: 'White', value: 'white'},
-                    {name: 'Yellow', value: 'yellow'},
-                    {name: 'Orange', value: 'orange'},
-                    {name: 'Green', value: 'green'},
-                    {name: 'Blue', value: 'blue'},
-                    {name: 'Purple', value: 'purple'},
-                    {name: 'Brown', value: 'brown'},
-                    {name: 'Red', value: 'red'},
-                    {name: 'Black', value: 'black'},
-                    {name: 'Epic Quests', value: 'quests'},
+                    {name: 'White', value: 'White'},
+                    {name: 'Yellow', value: 'Yellow'},
+                    {name: 'Orange', value: 'Orange'},
+                    {name: 'Green', value: 'Green'},
+                    {name: 'Blue', value: 'Blue'},
+                    {name: 'Purple', value: 'Purple'},
+                    {name: 'Brown', value: 'Brown'},
+                    {name: 'Red', value: 'Red'},
+                    {name: 'Black', value: 'Black'}
                 )),
 
     async execute(interaction) {
@@ -30,7 +29,8 @@ module.exports = {
 
         console.log(`${dayjs().toISOString()} Processing command: /requirements belt=${belt} requestor=${requestor}`)
 
-        let content = await getData(belt)
+        const markdown = await getData(belt.toLowerCase())
+        const content = `**Belt Requirements for ${belt} Belt**\n\n${markdown}\nRead More: https://lpubelts.com/?id=beltreqs&tab=${belt}`
         await interaction.reply({content, ephemeral: true})
     }
 }

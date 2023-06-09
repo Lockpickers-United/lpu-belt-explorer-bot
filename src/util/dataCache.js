@@ -61,11 +61,6 @@ const transformsByKey = {
         const content = await result.text()
         const index = content.indexOf('Epic Quest Options (')
         return content.substring(0, index)
-    },
-    quests: async result => {
-        const content = await result.text()
-        const index = content.indexOf('Epic Quest Options (')
-        return content.substring(index)
     }
 }
 
