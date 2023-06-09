@@ -9,34 +9,64 @@ const cache = new NodeCache({
     checkperiod: fifteenMinutes
 })
 
-const refreshData = async () => {
-    const result = await fetch('https://lpubelts.com/data.json')
-    const data = await result.json()
-    const finalData = data.map(entry => ({
-        ...entry,
-        fuzzy: removeAccents(
-            entry.makeModels
-                .map(({make, model}) => [make, model])
-                .flat()
-                .filter(a => a)
-                .concat([
-                    entry.version,
-                    entry.notes,
-                    entry.belt
-                ])
-                .join(',')
-        )
-    }))
-    cache.set('data', finalData)
+const refreshData = async key => {
+    const url = urlsByKey[key]
+    const result = await fetch(url)
+    const transform = transformsByKey[key]
+    const finalData = transform ? transform(result) : result.text()
+    cache.set(key, finalData)
+    return finalData
 }
 
-const getData = async () => {
-    const value = cache.get('data')
-    if (!value) {
-        await refreshData()
-        return cache.get('data')
+const getData = async key => {
+    const value = cache.get(key)
+    if (!value) return refreshData(key)
+    else return value
+}
+
+const urlsByKey = {
+    data: 'https://lpubelts.com/data.json',
+    white: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/white.md',
+    yellow: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/yellow.md',
+    orange: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/orange.md',
+    green: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/green.md',
+    blue: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/blue.md',
+    purple: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/purple.md',
+    brown: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/brown.md',
+    red: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/red.md',
+    black: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/black.md',
+    quests: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/black.md',
+}
+
+const transformsByKey = {
+    data: async result => {
+        const data = await result.json()
+        return data.map(entry => ({
+            ...entry,
+            fuzzy: removeAccents(
+                entry.makeModels
+                    .map(({make, model}) => [make, model])
+                    .flat()
+                    .filter(a => a)
+                    .concat([
+                        entry.version,
+                        entry.notes,
+                        entry.belt
+                    ])
+                    .join(',')
+            )
+        }))
+    },
+    black: async result => {
+        const content = await result.text()
+        const index = content.indexOf('Epic Quest Options (')
+        return content.substring(0, index)
+    },
+    quests: async result => {
+        const content = await result.text()
+        const index = content.indexOf('Epic Quest Options (')
+        return content.substring(index)
     }
-    return value
 }
 
 module.exports = {getData, refreshData}

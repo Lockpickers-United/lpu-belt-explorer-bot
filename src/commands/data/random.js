@@ -12,16 +12,15 @@ module.exports = {
         const requestor = `${username}#${discriminator}`
         console.log(`${dayjs().toISOString()} Processing command: /random requestor=${requestor}`)
 
-        const data = (await getData()).filter(entry => entry.belt !== 'Unranked')
-        const index = Math.floor(Math.random() * data.length)
-        const entry = data[index]
+        const data = await getData('data')
+        const filtered = data.filter(entry => entry.belt !== 'Unranked')
+        const index = Math.floor(Math.random() * filtered.length)
+        const entry = filtered[index]
 
         const {id, makeModels} = entry
         const {make, model} = makeModels[0]
         const makeModel = make && make !== model ? `${make} ${model}` : model
         const name = makeModel.replace(/[\s/]/g, '_').replace(/\W/g, '')
-
-
 
         const response = [
             `**Random Lock**: https://share.lpubelts.com/?id=${id}&name=${name}`

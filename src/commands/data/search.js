@@ -19,7 +19,7 @@ module.exports = {
     async execute(interaction) {
         const query = interaction.options.getString('query')
 
-        const data = await getData()
+        const data = await getData('data')
 
         const fixedQuery = removeAccents(query)
         const [entry] = fuzzysort.go(fixedQuery, data, {keys: fuzzySortKeys})
@@ -45,7 +45,10 @@ module.exports = {
             ].join('\n')
             await interaction.reply(response)
         } else {
-            await interaction.reply(`No locks found!`)
+            await interaction.reply({
+                content: `No locks found!`,
+                ephemeral: true
+            })
         }
     }
 }
