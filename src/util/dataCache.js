@@ -26,6 +26,7 @@ const getData = async key => {
 
 const urlsByKey = {
     data: 'https://lpubelts.com/data.json',
+    glossary: 'https://lpubelts.com/glossary.json',
     white: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/white.md',
     yellow: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/yellow.md',
     orange: 'https://raw.githubusercontent.com/Lockpickers-United/lpu-belt-explorer/main/src/resources/beltRequirements/orange.md',
