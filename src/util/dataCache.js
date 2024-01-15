@@ -58,6 +58,9 @@ const transformsByKey = {
             )
         }))
     },
+    glossary: async result => {
+        return await result.json()
+    },
     black: async result => {
         const content = await result.text()
         const index = content.indexOf('Epic Quest Options (')

@@ -29,8 +29,8 @@ module.exports = {
             const {term, definition} = entry
             const {user: {username, discriminator}} = interaction
 
-            const requestor = `${username}#${discriminator}`
-            console.log(`${dayjs().toISOString()} Processing command: /define ${query} term=${term} requestor=${requestor}`)
+            const requester = `${username}#${discriminator}`
+            console.log(`${dayjs().toISOString()} Processing command: /define ${query} term=${term} requestor=${requester}`)
 
             const response = [
                 `**Term**: ${term}`,
