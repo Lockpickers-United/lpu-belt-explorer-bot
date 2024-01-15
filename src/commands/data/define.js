@@ -32,9 +32,11 @@ module.exports = {
             const requester = `${username}#${discriminator}`
             console.log(`${dayjs().toISOString()} Processing command: /define ${query} term=${term} requestor=${requester}`)
 
+            const fixedDefinition = definition.replace(/\[([^\]]+)]\(.+\)/, '$1')
+
             const response = [
                 `**Term**: ${term}`,
-                `**Definition**: ${definition}`
+                `**Definition**: ${fixedDefinition}`
             ].join('\n')
             await interaction.reply(response)
         } else {
