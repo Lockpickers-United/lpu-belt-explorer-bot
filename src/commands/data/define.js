@@ -26,18 +26,14 @@ module.exports = {
             }))
 
         if (entry) {
-            const {term, definition} = entry
+            const {term} = entry
+            const safeTerm = encodeURI(term)
             const {user: {username, discriminator}} = interaction
 
             const requester = `${username}#${discriminator}`
             console.log(`${dayjs().toISOString()} Processing command: /define ${query} term=${term} requestor=${requester}`)
 
-            const fixedDefinition = definition.replace(/\[([^\]]+)]\(.+\)/, '$1')
-
-            const response = [
-                `**Term**: ${term}`,
-                `**Definition**: ${fixedDefinition}`
-            ].join('\n')
+            const response = `https://share.lpubelts.com/?term=${safeTerm}`
             await interaction.reply(response)
         } else {
             await interaction.reply({
