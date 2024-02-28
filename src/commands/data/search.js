@@ -41,7 +41,7 @@ module.exports = {
             const safeQuery = querystring.encode({search: query})
             const response = [
                 `**Term**: ${query}, **Top Result**: https://share.lpubelts.com/?id=${id}&name=${name}`,
-                `Continue this search on **LPU Belt Explorer**: https://lpubelts.com/#/locks?${safeQuery}`
+                `Continue this search on **LPU Belt Explorer**: https://lpubelts.com/#/locks?${safeQuery}&tab=search`
             ].join('\n')
             await interaction.reply(response)
         } else {
