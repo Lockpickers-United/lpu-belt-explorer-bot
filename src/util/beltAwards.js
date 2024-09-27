@@ -60,8 +60,7 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
                         discordUserId: awd.picker,
                         discordAwardName: awd.name,
                         awardUrl: `https://discord.com/channels/${lpuGuildId}/${beltRequestsChannelId}/${awd.message.id}`,
-                        awardCreatedAt: Timestamp.fromMillis(awd.message.createdTimestamp),
-                        claimed: false,                        
+                        awardCreatedAt: Timestamp.fromMillis(awd.message.createdTimestamp)
                     }
                     batchDB.set(awardRef, rec)
                     return {...rec, messageId: awd.message.id, createdStr: createdAt.toUTCString()}
