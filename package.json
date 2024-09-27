@@ -7,6 +7,7 @@
   "dependencies": {
     "dayjs": "^1.11.8",
     "discord.js": "^14.11.0",
+    "firebase-admin": "^12.5.0",
     "fuzzysort": "^2.0.4",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.11",

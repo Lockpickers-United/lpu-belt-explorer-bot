@@ -2,43 +2,23 @@
 const fs = require('node:fs')
 const path = require('node:path')
 
-// Require the necessary discord.js classes
-const {Client, Collection, Events, GatewayIntentBits} = require('discord.js')
+const {Client, Collection, GatewayIntentBits, Partials} = require('discord.js')
 const {DISCORD_TOKEN: token} = process.env
 
-// Create a new client instance
-const client = new Client({intents: [GatewayIntentBits.Guilds]})
-
-// When the client is ready, run this code (only once)
-// We use 'c' for the event parameter to keep it separate from the already defined 'client'
-client.once(Events.ClientReady, c => {
-    console.log(`Ready! Logged in as ${c.user.tag}`)
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent
+    ],
+    partials: [
+        Partials.Channel
+    ]
 })
 
 client.commands = new Collection()
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return
 
-    const command = interaction.client.commands.get(interaction.commandName)
-
-    if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`)
-        return
-    }
-
-    try {
-        await command.execute(interaction)
-    } catch (error) {
-        console.error(error)
-        if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true})
-        } else {
-            await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true})
-        }
-    }
-})
-
-// Load commands
 const foldersPath = path.join(__dirname, 'commands')
 const commandFolders = fs.readdirSync(foldersPath)
 for (const folder of commandFolders) {
@@ -56,5 +36,16 @@ for (const folder of commandFolders) {
     }
 }
 
-// Log in to Discord with your client's token
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const event = require(filePath);
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args));
+    } else {
+        client.on(event.name, (...args) => event.execute(...args));
+    }
+}
+
 client.login(token)
