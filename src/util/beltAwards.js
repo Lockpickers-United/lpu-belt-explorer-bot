@@ -41,6 +41,7 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
     let bookmarks = bookDoc.data() || {}
     let before = backfill ? bookmarks.earliestMessageId : null
     let after = backfill ? null : bookmarks.latestMessageId
+    let impactedDiscordIds = []
 
     while (!scanningCompleted) {
         // If after specified, then fetch starts from oldest message, otherwise latest
@@ -62,6 +63,7 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
                         awardUrl: `https://discord.com/channels/${lpuGuildId}/${beltRequestsChannelId}/${awd.message.id}`,
                         awardCreatedAt: Timestamp.fromMillis(awd.message.createdTimestamp)
                     }
+                    impactedDiscordIds.push(awd.picker)
                     batchDB.set(awardRef, rec)
                     return {...rec, messageId: awd.message.id, createdStr: createdAt.toUTCString()}
                 }))
@@ -104,6 +106,23 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
         }
         if (SINGLE_BATCH || batchMessages.size < BATCH_SIZE) {
             scanningCompleted = true
+        }
+    }
+
+    if (!backfill) {
+        let cacheKeys = []
+        const uniqIds = [...new Set(impactedDiscordIds)]
+        for (let idx=0; idx < uniqIds.length; idx++) {
+            const userDocs = await db.collection('lockcollections').where('discordId', '==', uniqIds[idx]).get()
+            userDocs.forEach(rec => cacheKeys.push(`activity: userId == ${rec.id}`))
+        }
+        if (DEBUG) {
+            cacheKeys.forEach(key => console.log(`query-cache clear ${key}`))
+        }
+        const cacheBatch = db.batch()
+        cacheKeys.forEach(key => cacheBatch.delete(db.collection('query-cache').doc(key)))
+        if (WRITE_TO_DB && cacheKeys.length > 0) {
+            await cacheBatch.commit()
         }
     }
 }
