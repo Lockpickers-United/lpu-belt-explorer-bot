@@ -25,7 +25,8 @@ const modIds = [
     '539288580758175744',
     '274252922647216129'
 ]
-const beltRegexp = /<:(white|yellow|orange|green|blue|purple|brown|red|black)belt:\d+>/
+const beltFlairRegexp = /<:(white|yellow|orange|green|blue|purple|brown|red|black)belt:\d+>/
+const beltTextRegexp = /[cC]ongrat.*([wW]hite|[yY]ellow|[oO]range|[gG]reen|[bB]lue|[pP]urple|[bB]rown|[rR]ed|[bB]lack) [bB]elt/
 const autoBotRegexp = /<@!?(\d+)>, <@!?(\d+)> has reviewed and approved your request\. Congrats on your ([^!]+)!/
 const bookmarksDocId = '00000_BOOKMARKS'
 
@@ -146,7 +147,7 @@ async function findAwardsInMessage(message, msgManager, backfill) {
 
         if (multiPickMatch) {
             const batchAwards = message.content.split("\n").map(line => {
-                const beltMatch = line.match(beltRegexp)
+                const beltMatch = line.match(beltFlairRegexp) || line.match(beltTextRegexp)
                 const singlePickMatch = line.match(/<@!?(\d+)>/)
                 if (beltMatch) {
                     const awardName = beltMatch[1].charAt(0).toUpperCase() + beltMatch[1].slice(1) + ' Belt'
@@ -166,7 +167,7 @@ async function findAwardsInMessage(message, msgManager, backfill) {
             const singlePickMatch = message.content.match(/<@!?(\d+)>/)
             if (singlePickMatch || refMsg) {
                 const pickerId = singlePickMatch ? singlePickMatch[1] : refMsg.author.id
-                const beltMatch = message.content.match(beltRegexp)
+                const beltMatch = message.content.match(beltFlairRegexp) || message.content.match(beltTextRegexp)
                 if (beltMatch) {
                     const awardName = beltMatch[1].charAt(0).toUpperCase() + beltMatch[1].slice(1) + ' Belt'
                     return [{picker: pickerId, name: awardName, message: message}]
