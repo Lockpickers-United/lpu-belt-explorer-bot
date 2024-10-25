@@ -7,7 +7,7 @@ module.exports = {
         if (message.guildId === lpuGuildId && 
             message.channelId === beltRequestsChannelId &&
             message.author.id === lpuBeltBotId) {
-            // await syncAwardsFromChannel(message.channel, false, 'prod')
+            await syncAwardsFromChannel(message.channel, false, 'prod')
         }
 
         if (!message.guildId && message.author.id === adminAuthorId) {
