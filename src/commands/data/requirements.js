@@ -30,7 +30,9 @@ module.exports = {
         console.log(`${dayjs().toISOString()} Processing command: /requirements belt=${belt} requestor=${requestor}`)
 
         const markdown = await getData(belt.toLowerCase())
-        const content = `**Belt Requirements for ${belt} Belt**\n\n${markdown}\nRead More: https://lpubelts.com/?id=beltreqs&tab=${belt}`
+        const suffix = markdown.length > 1800 ? '...' : ''
+
+        const content = `**Belt Requirements for ${belt} Belt**\n\n${markdown.substring(0,1800)} ${suffix}\nRead More: https://lpubelts.com/?id=beltreqs&tab=${belt}`
         await interaction.reply({content, ephemeral: true})
     }
 }
