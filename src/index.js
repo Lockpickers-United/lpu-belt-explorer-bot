@@ -33,7 +33,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
     if (reaction.message.channel.id === MONITOR_CHANNEL_ID) {
-        const logMessage = `${user.tag} reacted with: ${reaction.emoji.name} on: ${reaction.message.content.split('\n')[0].substring(0, 100)}`
+        const messageContent = reaction.message.content.replaceAll('@','').replaceAll('\n',' / ')
+        const logMessage = `${user.tag} reacted with: ${reaction.emoji.name} on: ${messageContent.substring(0, 100)}`
         const logChannel = client.channels.cache.get(LOG_CHANNEL_ID)
         if (!logChannel) {
             console.error(`Log channel with ID ${LOG_CHANNEL_ID} not found.`)
