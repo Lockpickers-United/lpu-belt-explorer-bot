@@ -3,14 +3,22 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const {Client, Collection, GatewayIntentBits, Partials} = require('discord.js')
-const {DISCORD_TOKEN: token} = process.env
-const MONITOR_CHANNEL_ID = '282170926064336907';
-const LOG_CHANNEL_ID = '1360395141822812311';
+const {DISCORD_TOKEN: token} = process.env;
+
+/**
+ * @prop Guilds
+ * @prop GuildMessages
+ * @prop GuildMembers
+ * @prop DirectMessages
+ * @prop MessageContent
+ * @prop GuildMessageReactions
+ */
 
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMembers,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
@@ -22,35 +30,10 @@ const client = new Client({
     ]
 })
 
-// Log all reactions in #announcements
-client.on('messageReactionAdd', async (reaction, user) => {
-    if (reaction.partial) {
-        try {
-            await reaction.fetch()
-        } catch (error) {
-            console.error('Error fetching the reaction:', error)
-            return
-        }
-    }
-    if (reaction.message.channel.id === MONITOR_CHANNEL_ID) {
-        const messageContent = reaction.message.content.replaceAll('@','').replaceAll('\n',' / ')
-        const logMessage = `${user.tag} reacted with: ${reaction.emoji.name} on: ${messageContent.substring(0, 100)}`
-        const logChannel = client.channels.cache.get(LOG_CHANNEL_ID)
-        if (!logChannel) {
-            console.error(`Log channel with ID ${LOG_CHANNEL_ID} not found.`)
-            return
-        }
-        logChannel.send(logMessage)
-            .then(() => console.log('Logged reaction:', logMessage))
-            .catch(console.error)
-    }
-})
-
-
 client.commands = new Collection()
 
 const foldersPath = path.join(__dirname, 'commands')
-const commandFolders = fs.readdirSync(foldersPath)
+const commandFolders = fs.readdirSync(foldersPath).filter(f => !f.includes('DS_Store'))
 for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder)
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
