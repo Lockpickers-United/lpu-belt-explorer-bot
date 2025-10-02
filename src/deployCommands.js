@@ -7,7 +7,7 @@ const path = require('node:path')
 const {
     DISCORD_TOKEN: token,
     DISCORD_APP_ID: clientId
-} = process.env
+} = require('../keys/keys.js')
 
 const commands = []
 // Grab all the command files from the commands directory you created earlier

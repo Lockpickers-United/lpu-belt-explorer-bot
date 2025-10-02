@@ -1,8 +1,11 @@
 const fs = require('fs')
 const admin = require('firebase-admin')
 const {getFirestore, Timestamp} = require('firebase-admin/firestore')
+const path = require('node:path')
 
-const serviceAccount = JSON.parse(fs.readFileSync('../keys/lpu-belt-explorer-firebase-adminsdk.json'))
+const keysPath = path.join(__dirname, '../../../keys')
+
+const serviceAccount = JSON.parse(fs.readFileSync('../../keys/lpu-belt-explorer-firebase-adminsdk.json', 'utf8'))
 const app = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://lpu-belt-explorer.firebaseio.com'

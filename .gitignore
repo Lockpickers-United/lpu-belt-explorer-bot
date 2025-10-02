@@ -21,3 +21,4 @@ node_modules
 *.sw?
 /stats.html
 public/version.json
+/keys/
