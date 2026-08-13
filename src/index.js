@@ -3,15 +3,12 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const {Client, Collection, GatewayIntentBits, Partials} = require('discord.js')
-//const {DISCORD_TOKEN: token} = process.env;
 const {DISCORD_TOKEN: token} = require('../keys/keys.js')
-
 
 
 /**
  * @prop Guilds
  * @prop GuildMessages
- * @prop GuildMembers
  * @prop DirectMessages
  * @prop MessageContent
  * @prop GuildMessageReactions
@@ -21,7 +18,6 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,

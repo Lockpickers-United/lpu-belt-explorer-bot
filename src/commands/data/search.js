@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js')
+const {SlashCommandBuilder, MessageFlags} = require('discord.js')
 const {getData} = require('../../util/dataCache')
 const fuzzysort = require('fuzzysort')
 const removeAccents = require('remove-accents')
@@ -46,8 +46,8 @@ module.exports = {
             await interaction.reply(response)
         } else {
             await interaction.reply({
-                content: `No locks found!`,
-                ephemeral: true
+                content: 'No locks found!',
+                flags: [MessageFlags.Ephemeral]
             })
         }
     }

@@ -8,6 +8,7 @@ const {
     DISCORD_TOKEN: token,
     DISCORD_APP_ID: clientId
 } = require('../keys/keys.js')
+const lpuGuildId = '140129091796992000'
 
 const commands = []
 // Grab all the command files from the commands directory you created earlier
@@ -41,6 +42,9 @@ const deploy = async () => {
 
         // The put method is used to fully refresh all commands in the guild with the current set
         const data = await rest.put(Routes.applicationCommands(clientId), {body: commands})
+
+        // Target deploy to LPU server
+        //const data = await rest.put(Routes.applicationCommands(clientId, lpuGuildId), {body: commands})
 
         console.log(`Successfully reloaded ${data.length} application (/) commands.`)
     } catch (error) {

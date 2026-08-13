@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js')
+const {SlashCommandBuilder, MessageFlags} = require('discord.js')
 const {getData} = require('../../util/dataCache')
 const dayjs = require('dayjs')
 
@@ -33,6 +33,6 @@ module.exports = {
         const suffix = markdown.length > 1800 ? '...' : ''
 
         const content = `**Belt Requirements for ${belt} Belt**\n\n${markdown.substring(0,1800)} ${suffix}\nRead More: https://lpubelts.com/?id=beltreqs&tab=${belt}`
-        await interaction.reply({content, ephemeral: true})
+        await interaction.reply({content, flags: [MessageFlags.Ephemeral]})
     }
 }
