@@ -1,9 +1,6 @@
 const fs = require('fs')
 const admin = require('firebase-admin')
 const {getFirestore, Timestamp} = require('firebase-admin/firestore')
-const path = require('node:path')
-
-const keysPath = path.join(__dirname, '../../../keys')
 
 const serviceAccount = JSON.parse(fs.readFileSync('../../keys/lpu-belt-explorer-firebase-adminsdk.json', 'utf8'))
 const app = admin.initializeApp({
@@ -19,6 +16,9 @@ function setDBEnvironment(environment) {
 const lpuGuildId = '140129091796992000'
 const beltRequestsChannelId = '282173282546089985'
 const lpuBeltBotId = '541073446839517194'
+const lockyJrId = '1364621479131746396'
+const mgsecureId = '671828049540677682'
+const allBotIds = [lpuBeltBotId, lockyJrId, mgsecureId]
 const adminAuthorId = '1046777741963440178'
 const modIds = [
     '97475530953068544',
@@ -30,7 +30,7 @@ const modIds = [
 ]
 const beltFlairRegexp = /<:(white|yellow|orange|green|blue|purple|brown|red|black)belt:\d+>/
 const beltTextRegexp = /[cC]ongrat.*([wW]hite|[yY]ellow|[oO]range|[gG]reen|[bB]lue|[pP]urple|[bB]rown|[rR]ed|[bB]lack) [bB]elt/
-const autoBotRegexp = /<@!?(\d+)>, <@!?(\d+)> has reviewed and approved your request\. Congrats on your ([^!]+)!/
+const autoBotRegexp = /<@!?(\d+)>, <@!?(\d+)> has reviewed and \w+ your request\. Congrats on your ([^!]+)!/
 const bookmarksDocId = '00000_BOOKMARKS'
 
 const WRITE_TO_DB = true
@@ -132,14 +132,14 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
 }
 
 async function findAwardsInMessage(message, msgManager, backfill) {
-    if (message.author.id === lpuBeltBotId) {
+    if (allBotIds.includes(String(message.author.id))) {
         const botMatch = message.content.match(autoBotRegexp)
         if (botMatch) {
             return [{picker: botMatch[1], name: botMatch[3], message: message}]
         }
-    } else if (backfill && modIds.includes(message.author.id)) {
+    } else if (backfill && modIds.includes(String(message.author.id))) {
         let refMsg = null
-        if (message.reference && message.reference.channelId === beltRequestsChannelId) {
+        if (message.reference && String(message.reference.channelId) === beltRequestsChannelId) {
             try {
                 refMsg = await msgManager.fetch(message.reference.messageId)
             } catch(err) {
@@ -169,7 +169,7 @@ async function findAwardsInMessage(message, msgManager, backfill) {
         } else {
             const singlePickMatch = message.content.match(/<@!?(\d+)>/)
             if (singlePickMatch || refMsg) {
-                const pickerId = singlePickMatch ? singlePickMatch[1] : refMsg.author.id
+                const pickerId = singlePickMatch ? singlePickMatch[1] : refMsg?.author.id
                 const beltMatch = message.content.match(beltFlairRegexp) || message.content.match(beltTextRegexp)
                 if (beltMatch) {
                     const awardName = beltMatch[1].charAt(0).toUpperCase() + beltMatch[1].slice(1) + ' Belt'
@@ -181,4 +181,4 @@ async function findAwardsInMessage(message, msgManager, backfill) {
     return null
 }
 
-module.exports = {syncAwardsFromChannel, lpuGuildId, beltRequestsChannelId, adminAuthorId, lpuBeltBotId}
+module.exports = {syncAwardsFromChannel, lpuGuildId, beltRequestsChannelId, adminAuthorId, lpuBeltBotId, allBotIds}

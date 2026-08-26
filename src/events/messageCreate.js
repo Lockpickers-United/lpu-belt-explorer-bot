@@ -1,16 +1,16 @@
 const {Events} = require('discord.js')
-const {syncAwardsFromChannel, lpuGuildId, beltRequestsChannelId, adminAuthorId, lpuBeltBotId} = require('../util/beltAwards.js')
+const {syncAwardsFromChannel, lpuGuildId, beltRequestsChannelId, adminAuthorId, allBotIds} = require('../util/beltAwards.js')
 
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.guildId === lpuGuildId && 
             message.channelId === beltRequestsChannelId &&
-            message.author.id === lpuBeltBotId) {
+            allBotIds.includes(String(message.author.id))) {
             await syncAwardsFromChannel(message.channel, false, 'prod')
         }
 
-        if (!message.guildId && message.author.id === adminAuthorId) {
+        if (!message.guildId && String(message.author.id) === adminAuthorId) {
             const lpuGuild = await message.client.guilds.fetch(lpuGuildId)
             const beltChan = await lpuGuild.channels.fetch(beltRequestsChannelId)
 
