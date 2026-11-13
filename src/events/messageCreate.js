@@ -35,6 +35,11 @@ module.exports = {
                     await syncAwardsFromChannel(beltChan, false, 'prod')
                     console.log('done.')
                     break
+                case 'fill in prod':
+                    console.log(`running command ${message.content}...`)
+                    await syncAwardsFromChannel(beltChan, false, 'prod', '1570102220345708661', '1568345354041163958')
+                    console.log('done.')
+                    break
             }
         }
     }

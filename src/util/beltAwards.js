@@ -19,7 +19,8 @@ const lpuBeltBotId = '541073446839517194'
 const lockyJrId = '1364621479131746396'
 const mgsecureId = '671828049540677682'
 const allBotIds = [lpuBeltBotId, lockyJrId, mgsecureId]
-const adminAuthorId = '1046777741963440178'
+//const adminAuthorId = '1046777741963440178' //tonysansan
+const adminAuthorId = mgsecureId
 const modIds = [
     '97475530953068544',
     '352428596461043713',
@@ -30,7 +31,8 @@ const modIds = [
 ]
 const beltFlairRegexp = /<:(white|yellow|orange|green|blue|purple|brown|red|black)belt:\d+>/
 const beltTextRegexp = /[cC]ongrat.*([wW]hite|[yY]ellow|[oO]range|[gG]reen|[bB]lue|[pP]urple|[bB]rown|[rR]ed|[bB]lack) [bB]elt/
-const autoBotRegexp = /<@!?(\d+)>, <@!?(\d+)> has reviewed and \w+ your request\. Congrats on your ([^!]+)!/
+//const autoBotRegexp = /<@!?(\d+)>, <@!?(\d+)> has reviewed and \w+ your request\. Congrats on your ([^!]+)!/
+const autoBotRegexp = /<@!?(\d+)>, (\S+) has reviewed and \w+ your request\. Congrats on your ([^!]+)!/
 const bookmarksDocId = '00000_BOOKMARKS'
 
 const WRITE_TO_DB = true
@@ -38,13 +40,20 @@ const DEBUG = true
 const BATCH_SIZE = 100
 const SINGLE_BATCH = false
 
-async function syncAwardsFromChannel(beltChan, backfill, environment) {
+async function syncAwardsFromChannel(beltChan, backfill, environment, beforeOverride, afterOverride) {
     setDBEnvironment(environment)
     let scanningCompleted = false
     const bookDoc = await db.collection('awards-discord').doc(bookmarksDocId).get()
     let bookmarks = bookDoc.data() || {}
-    let before = backfill ? bookmarks.earliestMessageId : null
-    let after = backfill ? null : bookmarks.latestMessageId
+    let before = beforeOverride
+        ? beforeOverride
+        : backfill
+            ? bookmarks.earliestMessageId : null
+    let after = afterOverride
+        ? afterOverride
+        : backfill
+            ? null : bookmarks.latestMessageId
+
     let impactedDiscordIds = []
 
     while (!scanningCompleted) {
@@ -54,13 +63,13 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
         const batchDB = db.batch()
 
         let awards = []
-        for (let idx=0; idx < keys.length; idx++) {
+        for (let idx = 0; idx < keys.length; idx++) {
             const newAwards = await findAwardsInMessage(batchMessages.get(keys[idx]), beltChan.messages, backfill)
             if (newAwards) {
                 awards.push(newAwards.map(awd => {
                     const awardRef = db.collection('awards-discord').doc()
                     let createdAt = new Date(0)
-                    createdAt.setUTCSeconds(awd.message.createdTimestamp/1000)
+                    createdAt.setUTCSeconds(awd.message.createdTimestamp / 1000)
                     const rec = {
                         discordUserId: awd.picker,
                         discordAwardName: awd.name,
@@ -116,7 +125,7 @@ async function syncAwardsFromChannel(beltChan, backfill, environment) {
     if (!backfill) {
         let cacheKeys = []
         const uniqIds = [...new Set(impactedDiscordIds)]
-        for (let idx=0; idx < uniqIds.length; idx++) {
+        for (let idx = 0; idx < uniqIds.length; idx++) {
             const userDocs = await db.collection('lockcollections').where('discordId', '==', uniqIds[idx]).get()
             userDocs.forEach(rec => cacheKeys.push(`activity: userId == ${rec.id}`))
         }
@@ -142,14 +151,14 @@ async function findAwardsInMessage(message, msgManager, backfill) {
         if (message.reference && String(message.reference.channelId) === beltRequestsChannelId) {
             try {
                 refMsg = await msgManager.fetch(message.reference.messageId)
-            } catch(err) {
+            } catch (err) {
                 // ignore
             }
         }
         const multiPickMatch = message.content.match(/<@!?(\d+)>[\s\S]*<@!?(\d+)>/)
 
         if (multiPickMatch) {
-            const batchAwards = message.content.split("\n").map(line => {
+            const batchAwards = message.content.split('\n').map(line => {
                 const beltMatch = line.match(beltFlairRegexp) || line.match(beltTextRegexp)
                 const singlePickMatch = line.match(/<@!?(\d+)>/)
                 if (beltMatch) {
@@ -175,7 +184,7 @@ async function findAwardsInMessage(message, msgManager, backfill) {
                     const awardName = beltMatch[1].charAt(0).toUpperCase() + beltMatch[1].slice(1) + ' Belt'
                     return [{picker: pickerId, name: awardName, message: message}]
                 }
-            } 
+            }
         }
     }
     return null
